@@ -1,0 +1,56 @@
+buildscript {
+  ext.safeExtGet = { prop, fallback ->
+    return rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+  }
+
+  repositories {
+    google()
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath 'com.android.tools.build:gradle:7.4.2'
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', '1.9.22')}"
+  }
+}
+
+def safeExtGet(prop, fallback) {
+  rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
+apply plugin: 'com.android.library'
+apply plugin: "kotlin-android"
+apply plugin: 'maven-publish'
+
+android {
+  namespace "com.veriff.sdk.reactnative"
+
+  sourceSets {
+    main {
+      manifest.srcFile "src/main/AndroidManifestNew.xml"
+    }
+  }
+
+  compileSdkVersion safeExtGet('compileSdkVersion', 34)
+  buildToolsVersion safeExtGet('buildToolsVersion', '34.0.0')
+
+  defaultConfig {
+    minSdkVersion safeExtGet('minSdkVersion', 26)
+    targetSdkVersion safeExtGet('targetSdkVersion', 34)
+  }
+}
+
+repositories {
+  mavenLocal()
+  google()
+  mavenCentral()
+  maven { url "https://cdn.veriff.me/android/" } //veriff public repo
+}
+
+dependencies {
+  //noinspection GradleDynamicVersion
+  implementation 'com.facebook.react:react-android:+'
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.21"
+
+  implementation 'com.veriff:veriff-library:7.1.0'
+}
